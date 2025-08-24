@@ -194,6 +194,8 @@ spring:
       chat:
         options:
           model: deepseek-chat
+    model:
+      rerank: dashscope # 是否开启“通义千问”的 Rerank 模型，填写 dashscope 开启
 
 yudao:
   ai:
