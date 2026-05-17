@@ -24,6 +24,9 @@ public class MesWmMaterialStockPageReqVO extends PageParam {
     @Schema(description = "虚拟仓过滤模式", example = "exclude")
     private String virtualFilter;
 
+    @Schema(description = "关键字（物料编码或名称模糊匹配）", example = "桨叶")
+    private String keyword;
+
     @Schema(description = "物料分类编号", example = "1")
     private Long itemTypeId;
 

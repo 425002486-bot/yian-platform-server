@@ -16,8 +16,12 @@ import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDateTime;
 
+import com.mzt.logapi.context.LogRecordContext;
+import com.mzt.logapi.starter.annotation.LogRecord;
+
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.mes.enums.ErrorCodeConstants.*;
+import static cn.iocoder.yudao.module.mes.enums.LogRecordConstants.*;
 
 /**
  * MES 维修工单 Service 实现类
@@ -37,6 +41,8 @@ public class MesDvRepairServiceImpl implements MesDvRepairService {
     private MesDvMachineryService machineryService;
 
     @Override
+    @LogRecord(type = MES_WORKORDER_TYPE, subType = MES_WORKORDER_CREATE_SUB_TYPE, bizNo = "{{#repair.id}}",
+            success = "新建维修工单【{{#repair.code}}】，关联设备 {{#repair.machineryId}}")
     public Long createRepair(MesDvRepairSaveReqVO createReqVO) {
         // 1. 校验保存数据
         validateSaveData(createReqVO);
@@ -45,6 +51,7 @@ public class MesDvRepairServiceImpl implements MesDvRepairService {
         MesDvRepairDO repair = BeanUtils.toBean(createReqVO, MesDvRepairDO.class);
         repair.setStatus(MesDvRepairStatusEnum.PREPARE.getStatus());
         repairMapper.insert(repair);
+        LogRecordContext.putVariable("repair", repair);
         return repair.getId();
     }
 
@@ -134,9 +141,12 @@ public class MesDvRepairServiceImpl implements MesDvRepairService {
     }
 
     @Override
+    @LogRecord(type = MES_WORKORDER_TYPE, subType = MES_WORKORDER_ACCEPT_SUB_TYPE, bizNo = "{{#id}}",
+            success = "受理维修工单【{{#repair.code}}】，设备标记停飞")
     public void submitRepair(Long id, Long userId) {
         // 1. 校验存在，且状态为草稿
-        validateRepairPrepare(id);
+        MesDvRepairDO repair = validateRepairPrepare(id);
+        LogRecordContext.putVariable("repair", repair);
 
         // 2. 更新状态为维修中，设置维修人
         repairMapper.updateById(new MesDvRepairDO().setId(id)
@@ -144,12 +154,15 @@ public class MesDvRepairServiceImpl implements MesDvRepairService {
     }
 
     @Override
+    @LogRecord(type = MES_WORKORDER_TYPE, subType = MES_WORKORDER_REPAIR_SUB_TYPE, bizNo = "{{#confirmReqVO.id}}",
+            success = "提交维修结果，工单【{{#repair.code}}】，状态变更为待验收")
     public void confirmRepair(cn.iocoder.yudao.module.mes.controller.admin.dv.repair.vo.MesDvRepairConfirmReqVO confirmReqVO) {
         // 1. 校验存在，且状态为维修中
         MesDvRepairDO repair = validateRepairExists(confirmReqVO.getId());
         if (ObjUtil.notEqual(MesDvRepairStatusEnum.CONFIRMED.getStatus(), repair.getStatus())) {
             throw exception(DV_REPAIR_NOT_CONFIRMED);
         }
+        LogRecordContext.putVariable("repair", repair);
 
         // 2. 更新状态为待验收，设置维修完成日期
         repairMapper.updateById(new MesDvRepairDO().setId(confirmReqVO.getId())
@@ -157,12 +170,15 @@ public class MesDvRepairServiceImpl implements MesDvRepairService {
     }
 
     @Override
+    @LogRecord(type = MES_RELEASE_TYPE, subType = MES_RELEASE_SUBMIT_SUB_TYPE, bizNo = "{{#id}}",
+            success = "提交放行审核，工单【{{#repair.code}}】，结论：{{#result == 1 ? '正常放行' : '不予放行'}}")
     public void finishRepair(Long id, Integer result, Long userId) {
         // 1. 校验存在，且状态为待验收
         MesDvRepairDO repair = validateRepairExists(id);
         if (ObjUtil.notEqual(MesDvRepairStatusEnum.APPROVING.getStatus(), repair.getStatus())) {
             throw exception(DV_REPAIR_NOT_APPROVING);
         }
+        LogRecordContext.putVariable("repair", repair);
 
         // 2. 更新状态为已确认，设置验收结果、验收人和验收日期
         repairMapper.updateById(new MesDvRepairDO().setId(id)

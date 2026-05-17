@@ -86,4 +86,12 @@ public interface AdminUserApi {
      */
     void validateUserList(Collection<Long> ids);
 
+    /**
+     * 根据昵称模糊查询用户列表
+     *
+     * @param nickname 昵称关键字
+     * @return 用户列表
+     */
+    List<AdminUserRespDTO> getUserListByNickname(String nickname);
+
 }

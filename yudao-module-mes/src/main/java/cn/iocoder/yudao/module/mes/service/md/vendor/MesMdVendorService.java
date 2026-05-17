@@ -94,6 +94,13 @@ public interface MesMdVendorService {
     }
 
     /**
+     * 获得全部启用的供应商精简列表
+     *
+     * @return 供应商列表
+     */
+    List<MesMdVendorDO> getVendorSimpleList();
+
+    /**
      * 批量导入供应商
      *
      * @param importVendors 导入供应商列表

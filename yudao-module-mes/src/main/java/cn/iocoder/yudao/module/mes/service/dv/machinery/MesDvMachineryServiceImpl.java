@@ -32,8 +32,12 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import com.mzt.logapi.context.LogRecordContext;
+import com.mzt.logapi.starter.annotation.LogRecord;
+
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.mes.enums.ErrorCodeConstants.*;
+import static cn.iocoder.yudao.module.mes.enums.LogRecordConstants.*;
 
 /**
  * MES 设备台账 Service 实现类
@@ -69,6 +73,8 @@ public class MesDvMachineryServiceImpl implements MesDvMachineryService {
     private MesDvRepairService repairService;
 
     @Override
+    @LogRecord(type = MES_DEVICE_TYPE, subType = MES_DEVICE_CREATE_SUB_TYPE, bizNo = "{{#machinery.id}}",
+            success = MES_DEVICE_CREATE_SUCCESS)
     public Long createMachinery(MesDvMachinerySaveReqVO createReqVO) {
         // 校验设备类型存在
         machineryTypeService.getMachineryType(createReqVO.getMachineryTypeId());
@@ -80,6 +86,8 @@ public class MesDvMachineryServiceImpl implements MesDvMachineryService {
         // 插入
         MesDvMachineryDO machinery = BeanUtils.toBean(createReqVO, MesDvMachineryDO.class);
         machineryMapper.insert(machinery);
+        // 记录审计日志上下文
+        LogRecordContext.putVariable("machinery", machinery);
 
         // 自动生成条码
         barcodeService.autoGenerateBarcode(BarcodeBizTypeEnum.MACHINERY.getValue(),

@@ -26,8 +26,12 @@ import org.springframework.validation.annotation.Validated;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mzt.logapi.context.LogRecordContext;
+import com.mzt.logapi.starter.annotation.LogRecord;
+
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.mes.enums.ErrorCodeConstants.*;
+import static cn.iocoder.yudao.module.mes.enums.LogRecordConstants.*;
 
 /**
  * MES 设备点检记录 Service 实现类
@@ -100,6 +104,8 @@ public class MesDvCheckRecordServiceImpl implements MesDvCheckRecordService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @LogRecord(type = MES_WORKORDER_TYPE, subType = MES_WORKORDER_INSPECT_SUB_TYPE, bizNo = "{{#id}}",
+            success = "提交复检，点检记录【{{#id}}】，结论：通过")
     public void submitCheckRecord(Long id) {
         // 1.1 校验状态为草稿
         validateCheckRecordDraft(id);

@@ -25,8 +25,10 @@ public interface OperateLogMapper extends BaseMapperX<OperateLogDO> {
     default PageResult<OperateLogDO> selectPage(OperateLogPageReqDTO pageReqDTO) {
         return selectPage(pageReqDTO, new LambdaQueryWrapperX<OperateLogDO>()
                 .eqIfPresent(OperateLogDO::getType, pageReqDTO.getType())
+                .inIfPresent(OperateLogDO::getType, pageReqDTO.getTypes())
                 .eqIfPresent(OperateLogDO::getBizId, pageReqDTO.getBizId())
                 .eqIfPresent(OperateLogDO::getUserId, pageReqDTO.getUserId())
+                .betweenIfPresent(OperateLogDO::getCreateTime, pageReqDTO.getCreateTime())
                 .orderByDesc(OperateLogDO::getId));
     }
 

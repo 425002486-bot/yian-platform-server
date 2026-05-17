@@ -126,4 +126,12 @@ public interface MesMdItemService {
      */
     Long getItemCountByUnitMeasureId(Long unitMeasureId);
 
+    /**
+     * 按关键字模糊搜索物料（编码或名称）
+     *
+     * @param keyword 关键字
+     * @return 物料列表
+     */
+    List<MesMdItemDO> getItemListByKeyword(String keyword);
+
 }

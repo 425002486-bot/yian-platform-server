@@ -202,6 +202,11 @@ public class MesMdVendorServiceImpl implements MesMdVendorService {
     }
 
     @Override
+    public List<MesMdVendorDO> getVendorSimpleList() {
+        return vendorMapper.selectList(MesMdVendorDO::getStatus, CommonStatusEnum.ENABLE.getStatus());
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public MesMdVendorImportRespVO importVendorList(List<MesMdVendorImportExcelVO> importVendors, boolean updateSupport) {
         // 1. 参数校验

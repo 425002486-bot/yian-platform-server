@@ -79,10 +79,24 @@ public class MesWmMaterialStockServiceImpl implements MesWmMaterialStockService 
             List<MesMdItemTypeDO> children = itemTypeService.getItemTypeChildrenList(pageReqVO.getItemTypeId());
             itemTypeIds.addAll(convertSet(children, MesMdItemTypeDO::getId));
         }
-        // 1.2 解析 itemId
+        // 1.2 解析 itemId 和 keyword
         Set<Long> itemIds = null;
         if (pageReqVO.getItemId() != null) {
             itemIds = SetUtils.asSet(pageReqVO.getItemId());
+        }
+        if (pageReqVO.getKeyword() != null && !pageReqVO.getKeyword().isEmpty()) {
+            // 按关键字模糊搜索物料编码和名称
+            List<MesMdItemDO> matchedItems = itemService.getItemListByKeyword(pageReqVO.getKeyword());
+            Set<Long> keywordItemIds = convertSet(matchedItems, MesMdItemDO::getId);
+            if (keywordItemIds.isEmpty()) {
+                return new PageResult<>(Collections.emptyList(), 0L);
+            }
+            itemIds = itemIds != null ? SetUtils.asSet(itemIds.toArray(new Long[0])) : keywordItemIds;
+            if (itemIds != keywordItemIds) {
+                itemIds.retainAll(keywordItemIds); // 取交集
+            } else {
+                itemIds = keywordItemIds;
+            }
         }
         // 1.3 解析 virtualFilter：转换为虚拟仓 warehouseId
         Long virtualWarehouseId = null;

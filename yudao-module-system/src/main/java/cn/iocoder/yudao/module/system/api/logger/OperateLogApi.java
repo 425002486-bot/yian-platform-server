@@ -20,4 +20,12 @@ public interface OperateLogApi extends OperateLogCommonApi {
      */
     PageResult<OperateLogRespDTO> getOperateLogPage(OperateLogPageReqDTO pageReqDTO);
 
+    /**
+     * 获取操作日志详情
+     *
+     * @param id 日志编号
+     * @return 操作日志
+     */
+    OperateLogRespDTO getOperateLog(Long id);
+
 }

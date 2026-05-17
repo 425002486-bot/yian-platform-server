@@ -5,6 +5,7 @@ import cn.hutool.core.util.ObjUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.exception.ServiceException;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.mes.controller.admin.md.item.vo.MesMdItemImportExcelVO;
 import cn.iocoder.yudao.module.mes.controller.admin.md.item.vo.MesMdItemImportRespVO;
@@ -272,6 +273,17 @@ public class MesMdItemServiceImpl implements MesMdItemService {
     @Override
     public Long getItemCountByUnitMeasureId(Long unitMeasureId) {
         return itemMapper.selectCountByUnitMeasureId(unitMeasureId);
+    }
+
+    @Override
+    public List<MesMdItemDO> getItemListByKeyword(String keyword) {
+        LambdaQueryWrapperX<MesMdItemDO> wrapper = new LambdaQueryWrapperX<>();
+        if (keyword != null && !keyword.isEmpty()) {
+            wrapper.and(w -> w.like(MesMdItemDO::getCode, keyword)
+                    .or().like(MesMdItemDO::getName, keyword));
+        }
+        wrapper.last("LIMIT 50");
+        return itemMapper.selectList(wrapper);
     }
 
     @Override

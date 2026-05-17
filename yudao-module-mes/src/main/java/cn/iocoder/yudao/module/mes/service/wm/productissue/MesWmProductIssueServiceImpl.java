@@ -34,8 +34,12 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.mzt.logapi.context.LogRecordContext;
+import com.mzt.logapi.starter.annotation.LogRecord;
+
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.mes.enums.ErrorCodeConstants.*;
+import static cn.iocoder.yudao.module.mes.enums.LogRecordConstants.*;
 
 /**
  * MES 领料出库单 Service 实现类
@@ -66,6 +70,8 @@ public class MesWmProductIssueServiceImpl implements MesWmProductIssueService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @LogRecord(type = MES_SPARE_TYPE, subType = MES_SPARE_PICK_SUB_TYPE, bizNo = "{{#issue.id}}",
+            success = "创建领料出库单【{{#issue.id}}】")
     public Long createProductIssue(MesWmProductIssueSaveReqVO createReqVO) {
         // 1. 校验关联数据
         validateProductIssueSaveData(createReqVO);
@@ -74,6 +80,7 @@ public class MesWmProductIssueServiceImpl implements MesWmProductIssueService {
         MesWmProductIssueDO issue = BeanUtils.toBean(createReqVO, MesWmProductIssueDO.class);
         issue.setStatus(MesWmProductIssueStatusEnum.PREPARE.getStatus());
         issueMapper.insert(issue);
+        LogRecordContext.putVariable("issue", issue);
         return issue.getId();
     }
 

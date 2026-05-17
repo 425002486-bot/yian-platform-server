@@ -20,6 +20,14 @@ public class MesWmMaterialStockRespVO {
     @Schema(description = "物料分类编号", example = "1")
     private Long itemTypeId;
 
+    @Schema(description = "物料分类名称", example = "桨叶")
+    @ExcelProperty("物料分类")
+    private String itemTypeName;
+
+    @Schema(description = "安全库存（最小库存）", example = "10")
+    @ExcelProperty("安全库存")
+    private BigDecimal minStock;
+
     @Schema(description = "物料编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     private Long itemId;
 

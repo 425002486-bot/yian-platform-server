@@ -39,8 +39,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.mzt.logapi.context.LogRecordContext;
+import com.mzt.logapi.starter.annotation.LogRecord;
+
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.mes.enums.ErrorCodeConstants.*;
+import static cn.iocoder.yudao.module.mes.enums.LogRecordConstants.*;
 
 /**
  * MES 生产退料单 Service 实现类
@@ -73,6 +77,8 @@ public class MesWmReturnIssueServiceImpl implements MesWmReturnIssueService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @LogRecord(type = MES_SPARE_TYPE, subType = MES_SPARE_RETURN_SUB_TYPE, bizNo = "{{#issue.id}}",
+            success = "创建退料单【{{#issue.id}}】")
     public Long createReturnIssue(MesWmReturnIssueSaveReqVO createReqVO) {
         // 1. 校验关联数据
         validateReturnIssueSaveData(createReqVO);
@@ -81,6 +87,7 @@ public class MesWmReturnIssueServiceImpl implements MesWmReturnIssueService {
         MesWmReturnIssueDO issue = BeanUtils.toBean(createReqVO, MesWmReturnIssueDO.class);
         issue.setStatus(MesWmReturnIssueStatusEnum.PREPARE.getStatus());
         issueMapper.insert(issue);
+        LogRecordContext.putVariable("issue", issue);
         return issue.getId();
     }
 

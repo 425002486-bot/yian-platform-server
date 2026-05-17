@@ -21,8 +21,11 @@ import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
+import com.mzt.logapi.starter.annotation.LogRecord;
+
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.mes.enums.ErrorCodeConstants.*;
+import static cn.iocoder.yudao.module.mes.enums.LogRecordConstants.*;
 
 /**
  * MES 设备保养记录 Service 实现类
@@ -70,6 +73,8 @@ public class MesDvMaintenRecordServiceImpl implements MesDvMaintenRecordService 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    @LogRecord(type = MES_WORKORDER_TYPE, subType = MES_WORKORDER_DIAGNOSIS_SUB_TYPE, bizNo = "{{#id}}",
+            success = "提交保养诊断记录【{{#id}}】")
     public void submitMaintenRecord(Long id) {
         // 1.1 校验状态为草稿
         validateMaintenRecordDraft(id);
