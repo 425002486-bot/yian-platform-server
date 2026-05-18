@@ -21,4 +21,8 @@ public interface YianPersonnelExtMapper extends BaseMapperX<YianPersonnelExtDO> 
         return selectOne(YianPersonnelExtDO::getUserId, userId);
     }
 
+    default Long selectCountByBizRole(String bizRole) {
+        return selectCount(YianPersonnelExtDO::getBizRole, bizRole);
+    }
+
 }

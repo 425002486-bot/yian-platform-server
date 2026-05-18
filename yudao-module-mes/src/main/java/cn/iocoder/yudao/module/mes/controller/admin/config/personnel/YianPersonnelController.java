@@ -6,6 +6,7 @@ import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.mes.controller.admin.config.personnel.vo.*;
 import cn.iocoder.yudao.module.mes.dal.dataobject.config.personnel.YianPersonnelExtDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.config.station.YianStationDO;
+import cn.iocoder.yudao.module.mes.dal.mysql.config.personnel.YianPersonnelExtMapper;
 import cn.iocoder.yudao.module.mes.service.config.personnel.YianPersonnelService;
 import cn.iocoder.yudao.module.mes.service.config.station.YianStationService;
 import cn.iocoder.yudao.module.system.api.user.AdminUserApi;
@@ -42,6 +43,8 @@ public class YianPersonnelController {
 
     @Resource
     private YianPersonnelService personnelService;
+    @Resource
+    private YianPersonnelExtMapper personnelExtMapper;
     @Resource
     private YianStationService stationService;
     @Resource
@@ -127,6 +130,43 @@ public class YianPersonnelController {
             list.add(item);
         });
         return success(list);
+    }
+
+    @GetMapping("/role-summary")
+    @Operation(summary = "获得角色概览（含人数和权限描述）")
+    public CommonResult<List<Map<String, Object>>> getRoleSummary() {
+        // 预定义角色描述和权限矩阵
+        String[][] roleDefs = {
+            {"site_lead",        "站点负责人", "查看设备与工单，派工调度，推动审批节点",
+             "view", "exec", "view", "view", "view", "view", "view", "exec"},
+            {"ops_staff",        "机务人员",   "执行受理、初诊、领料、维修等一线作业",
+             "view", "exec", "exec", "exec", "view", "view", "view", "none"},
+            {"inspector",        "复检人员",   "确认或驳回复检结果",
+             "view", "view", "view", "view", "exec", "view", "view", "none"},
+            {"release_approver", "放行审核人", "完成放行审核，形成放行结论",
+             "view", "view", "view", "view", "view", "exec", "view", "none"},
+            {"parts_manager",    "备件管理员", "库存管理、入库登记、领退料处理",
+             "view", "view", "view", "exec", "view", "view", "view", "none"},
+            {"auditor",          "审计人员",   "查看日志、履历和责任链，完整追溯关键操作",
+             "view", "view", "view", "view", "view", "view", "exec", "none"},
+        };
+        String[] permKeys = {"asset", "intake", "repair", "parts", "inspect", "release", "audit", "config"};
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (String[] def : roleDefs) {
+            Map<String, Object> item = new LinkedHashMap<>();
+            item.put("code", def[0]);
+            item.put("name", def[1]);
+            item.put("description", def[2]);
+            item.put("userCount", personnelExtMapper.selectCountByBizRole(def[0]));
+            Map<String, String> perms = new LinkedHashMap<>();
+            for (int i = 0; i < permKeys.length; i++) {
+                perms.put(permKeys[i], def[3 + i]);
+            }
+            item.put("perms", perms);
+            result.add(item);
+        }
+        return success(result);
     }
 
     private YianPersonnelRespVO buildRespVO(YianPersonnelExtDO ext) {
