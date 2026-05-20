@@ -35,7 +35,7 @@ public class YianAssetImportExcelVO {
     @ExcelProperty("设备类型编码")
     private String machineryTypeCode;
 
-    @ExcelProperty("所属车间编码")
+    @ExcelProperty("所属站点编码")
     private String workshopCode;
 
     @ExcelProperty("设备状态")

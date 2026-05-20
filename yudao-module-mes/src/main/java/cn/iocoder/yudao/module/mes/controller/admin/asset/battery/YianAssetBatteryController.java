@@ -1,26 +1,26 @@
 package cn.iocoder.yudao.module.mes.controller.admin.asset.battery;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.framework.common.util.collection.MapUtils;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.mes.controller.admin.asset.battery.vo.YianAssetBatteryListReqVO;
 import cn.iocoder.yudao.module.mes.controller.admin.asset.battery.vo.YianAssetBatteryRespVO;
+import cn.iocoder.yudao.module.mes.controller.admin.asset.battery.vo.YianAssetBatterySaveReqVO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.asset.battery.YianAssetBatteryDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.dv.machinery.MesDvMachineryDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.md.workstation.MesMdWorkshopDO;
 import cn.iocoder.yudao.module.mes.service.asset.battery.YianAssetBatteryService;
 import cn.iocoder.yudao.module.mes.service.dv.machinery.MesDvMachineryService;
 import cn.iocoder.yudao.module.mes.service.md.workstation.MesMdWorkshopService;
-import cn.hutool.core.date.LocalDateTimeUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -42,6 +42,32 @@ public class YianAssetBatteryController {
     private MesMdWorkshopService workshopService;
     @Resource
     private MesDvMachineryService machineryService;
+
+    @PostMapping("/create")
+    @Operation(summary = "创建资产电池")
+    @PreAuthorize("@ss.hasPermission('asset:battery:list')")
+    public CommonResult<Long> createBattery(@Valid @RequestBody YianAssetBatterySaveReqVO createReqVO) {
+        return success(batteryService.createBattery(createReqVO));
+    }
+
+    @PutMapping("/update")
+    @Operation(summary = "更新资产电池")
+    @PreAuthorize("@ss.hasPermission('asset:battery:list')")
+    public CommonResult<Boolean> updateBattery(@Valid @RequestBody YianAssetBatterySaveReqVO updateReqVO) {
+        batteryService.updateBattery(updateReqVO);
+        return success(true);
+    }
+
+    @GetMapping("/get")
+    @Operation(summary = "获取资产电池详情")
+    @PreAuthorize("@ss.hasPermission('asset:battery:list')")
+    public CommonResult<YianAssetBatteryRespVO> getBattery(@RequestParam("id") Long id) {
+        YianAssetBatteryDO battery = batteryService.getBattery(id);
+        if (battery == null) {
+            return success(null);
+        }
+        return success(buildBatteryRespList(Collections.singletonList(battery)).get(0));
+    }
 
     @GetMapping("/list")
     @Operation(summary = "获取资产电池列表")

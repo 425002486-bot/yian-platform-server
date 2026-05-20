@@ -6,6 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.enums.CommonStatusEnum;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.mes.controller.admin.asset.battery.vo.YianAssetBatteryListReqVO;
+import cn.iocoder.yudao.module.mes.controller.admin.asset.battery.vo.YianAssetBatterySaveReqVO;
 import cn.iocoder.yudao.module.mes.controller.admin.asset.vo.YianAssetImportExcelVO;
 import cn.iocoder.yudao.module.mes.controller.admin.asset.vo.YianAssetImportSegmentRespVO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.asset.battery.YianAssetBatteryDO;
@@ -26,6 +27,9 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
+import static cn.iocoder.yudao.module.mes.enums.ErrorCodeConstants.*;
+
 @Service
 @Validated
 public class YianAssetBatteryServiceImpl implements YianAssetBatteryService {
@@ -36,6 +40,47 @@ public class YianAssetBatteryServiceImpl implements YianAssetBatteryService {
     private MesMdWorkshopService workshopService;
     @Resource
     private MesDvMachineryMapper machineryMapper;
+
+    @Override
+    public Long createBattery(YianAssetBatterySaveReqVO createReqVO) {
+        workshopService.getWorkshop(createReqVO.getWorkshopId());
+        validateLinkedMachineryExists(createReqVO.getLinkedDeviceId());
+        validateBatteryCodeUnique(null, createReqVO.getBatteryCode());
+        validateBatterySerialNumberUnique(null, createReqVO.getSerialNumber());
+
+        YianAssetBatteryDO battery = BeanUtils.toBean(createReqVO, YianAssetBatteryDO.class, item -> {
+            item.setCode(createReqVO.getBatteryCode());
+            item.setLinkedMachineryId(createReqVO.getLinkedDeviceId());
+            item.setHealthStatus(StrUtil.blankToDefault(createReqVO.getHealthStatus(), "normal"));
+            item.setSoh(ObjUtil.defaultIfNull(createReqVO.getSoh(), 100));
+            item.setCycleCount(ObjUtil.defaultIfNull(createReqVO.getCycleCount(), 0));
+        });
+        batteryMapper.insert(battery);
+        return battery.getId();
+    }
+
+    @Override
+    public void updateBattery(YianAssetBatterySaveReqVO updateReqVO) {
+        validateBatteryExists(updateReqVO.getId());
+        workshopService.getWorkshop(updateReqVO.getWorkshopId());
+        validateLinkedMachineryExists(updateReqVO.getLinkedDeviceId());
+        validateBatteryCodeUnique(updateReqVO.getId(), updateReqVO.getBatteryCode());
+        validateBatterySerialNumberUnique(updateReqVO.getId(), updateReqVO.getSerialNumber());
+
+        YianAssetBatteryDO updateObj = BeanUtils.toBean(updateReqVO, YianAssetBatteryDO.class, item -> {
+            item.setCode(updateReqVO.getBatteryCode());
+            item.setLinkedMachineryId(updateReqVO.getLinkedDeviceId());
+            item.setHealthStatus(StrUtil.blankToDefault(updateReqVO.getHealthStatus(), "normal"));
+            item.setSoh(ObjUtil.defaultIfNull(updateReqVO.getSoh(), 100));
+            item.setCycleCount(ObjUtil.defaultIfNull(updateReqVO.getCycleCount(), 0));
+        });
+        batteryMapper.updateById(updateObj);
+    }
+
+    @Override
+    public YianAssetBatteryDO getBattery(Long id) {
+        return batteryMapper.selectById(id);
+    }
 
     @Override
     public List<YianAssetBatteryDO> getBatteryList(YianAssetBatteryListReqVO reqVO) {
@@ -75,12 +120,12 @@ public class YianAssetBatteryServiceImpl implements YianAssetBatteryService {
                 return;
             }
             if (StrUtil.isBlank(importItem.getWorkshopCode())) {
-                respVO.getFailureCodes().put(key, "所属车间编码不能为空");
+                respVO.getFailureCodes().put(key, "所属站点编码不能为空");
                 return;
             }
             MesMdWorkshopDO workshop = workshopCodeMap.get(importItem.getWorkshopCode());
             if (workshop == null) {
-                respVO.getFailureCodes().put(key, "所属车间编码[" + importItem.getWorkshopCode() + "]不存在");
+                respVO.getFailureCodes().put(key, "所属站点编码[" + importItem.getWorkshopCode() + "]不存在");
                 return;
             }
             MesDvMachineryDO linkedMachinery = null;
@@ -123,5 +168,46 @@ public class YianAssetBatteryServiceImpl implements YianAssetBatteryService {
             item.setCycleCount(ObjUtil.defaultIfNull(importItem.getCycleCount(), 0));
         });
         return battery;
+    }
+
+    private void validateBatteryExists(Long id) {
+        if (id == null || batteryMapper.selectById(id) == null) {
+            throw exception(ASSET_BATTERY_NOT_EXISTS);
+        }
+    }
+
+    private void validateLinkedMachineryExists(Long linkedDeviceId) {
+        if (linkedDeviceId == null) {
+            return;
+        }
+        if (machineryMapper.selectById(linkedDeviceId) == null) {
+            throw exception(DV_MACHINERY_NOT_EXISTS);
+        }
+    }
+
+    private void validateBatteryCodeUnique(Long id, String batteryCode) {
+        if (StrUtil.isBlank(batteryCode)) {
+            return;
+        }
+        YianAssetBatteryDO battery = batteryMapper.selectByCode(batteryCode);
+        if (battery == null) {
+            return;
+        }
+        if (ObjUtil.notEqual(battery.getId(), id)) {
+            throw exception(ASSET_BATTERY_CODE_DUPLICATE);
+        }
+    }
+
+    private void validateBatterySerialNumberUnique(Long id, String serialNumber) {
+        if (StrUtil.isBlank(serialNumber)) {
+            return;
+        }
+        YianAssetBatteryDO battery = batteryMapper.selectBySerialNumber(serialNumber);
+        if (battery == null) {
+            return;
+        }
+        if (ObjUtil.notEqual(battery.getId(), id)) {
+            throw exception(ASSET_BATTERY_SERIAL_NUMBER_DUPLICATE);
+        }
     }
 }

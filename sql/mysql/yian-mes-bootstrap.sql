@@ -364,10 +364,17 @@ ON DUPLICATE KEY UPDATE
 INSERT INTO `mes_dv_machinery_type`
 (`id`, `code`, `name`, `parent_id`, `status`, `sort`, `remark`, `creator`, `updater`, `deleted`, `tenant_id`)
 VALUES
-(1000, 'DV-ROOT', 'UAV Device', 0, 0, 1, 'mvp root type', '1', '1', b'0', 1),
-(1001, 'MT-001', 'Multirotor UAV', 1000, 0, 10, 'mvp sample type', '1', '1', b'0', 1)
+(1000, 'DV-ROOT', '设备类型根节点', 0, 1, 1, '系统保留根节点，不参与选择', '1', '1', b'0', 1),
+(1001, 'AIRCRAFT', '无人机整机', 0, 0, 10, '无人机主机设备', '1', '1', b'0', 1),
+(1002, 'REMOTE_CONTROLLER', '遥控器', 0, 0, 20, '飞手操控终端', '1', '1', b'0', 1),
+(1003, 'GIMBAL_PAYLOAD', '云台载荷', 0, 0, 30, '相机、喊话器、探照灯等载荷', '1', '1', b'0', 1),
+(1004, 'RTK_DEVICE', 'RTK设备', 0, 0, 40, '定位与差分相关设备', '1', '1', b'0', 1),
+(1005, 'CHARGING_DEVICE', '充电设备', 0, 0, 50, '电池或整机充电配套设备', '1', '1', b'0', 1),
+(1006, 'HANGAR_DOCK', '机库/机场柜', 0, 0, 60, '机库、机场柜等停放保障设备', '1', '1', b'0', 1),
+(1007, 'GROUND_STATION', '地面站终端', 0, 0, 70, '地面站、图传与调度终端', '1', '1', b'0', 1)
 ON DUPLICATE KEY UPDATE
 `name` = VALUES(`name`),
+`code` = VALUES(`code`),
 `parent_id` = VALUES(`parent_id`),
 `status` = VALUES(`status`),
 `sort` = VALUES(`sort`),

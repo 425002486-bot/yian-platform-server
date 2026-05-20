@@ -248,12 +248,12 @@ public class MesDvMachineryServiceImpl implements MesDvMachineryService {
             }
             // 3.3 校验车间编码
             if (StrUtil.isBlank(importItem.getWorkshopCode())) {
-                respVO.getFailureCodes().put(key, "车间编码不能为空");
+                respVO.getFailureCodes().put(key, "所属站点编码不能为空");
                 return;
             }
             MesMdWorkshopDO workshop = workshopCodeMap.get(importItem.getWorkshopCode());
             if (workshop == null) {
-                respVO.getFailureCodes().put(key, "车间编码[" + importItem.getWorkshopCode() + "]不存在");
+                respVO.getFailureCodes().put(key, "所属站点编码[" + importItem.getWorkshopCode() + "]不存在");
                 return;
             }
 

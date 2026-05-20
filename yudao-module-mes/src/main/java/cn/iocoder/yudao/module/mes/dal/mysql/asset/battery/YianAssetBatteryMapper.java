@@ -30,4 +30,8 @@ public interface YianAssetBatteryMapper extends BaseMapperX<YianAssetBatteryDO> 
     default YianAssetBatteryDO selectByCode(String code) {
         return selectOne(YianAssetBatteryDO::getCode, code);
     }
+
+    default YianAssetBatteryDO selectBySerialNumber(String serialNumber) {
+        return selectOne(YianAssetBatteryDO::getSerialNumber, serialNumber);
+    }
 }
