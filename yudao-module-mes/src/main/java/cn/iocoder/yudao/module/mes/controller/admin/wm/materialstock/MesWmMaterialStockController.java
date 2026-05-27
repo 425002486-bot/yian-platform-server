@@ -12,10 +12,14 @@ import cn.iocoder.yudao.module.mes.controller.admin.wm.materialstock.vo.MesWmPic
 import cn.iocoder.yudao.module.mes.controller.admin.wm.materialstock.vo.MesWmMaterialStockInboundReqVO;
 import cn.iocoder.yudao.module.mes.controller.admin.wm.materialstock.vo.YianSparePartImportExcelVO;
 import cn.iocoder.yudao.module.mes.controller.admin.md.item.vo.MesMdItemSaveReqVO;
+import cn.iocoder.yudao.module.mes.dal.dataobject.wm.miscissue.MesWmMiscIssueDO;
+import cn.iocoder.yudao.module.mes.dal.dataobject.wm.miscissue.MesWmMiscIssueLineDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.wm.productissue.MesWmProductIssueDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.wm.productissue.MesWmProductIssueLineDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.wm.returnissue.MesWmReturnIssueDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.wm.returnissue.MesWmReturnIssueLineDO;
+import cn.iocoder.yudao.module.mes.dal.mysql.wm.miscissue.MesWmMiscIssueLineMapper;
+import cn.iocoder.yudao.module.mes.dal.mysql.wm.miscissue.MesWmMiscIssueMapper;
 import cn.iocoder.yudao.module.mes.dal.mysql.wm.productissue.MesWmProductIssueLineMapper;
 import cn.iocoder.yudao.module.mes.dal.mysql.wm.productissue.MesWmProductIssueMapper;
 import cn.iocoder.yudao.module.mes.dal.mysql.wm.returnissue.MesWmReturnIssueLineMapper;
@@ -95,6 +99,10 @@ public class MesWmMaterialStockController {
     private MesWmProductIssueMapper productIssueMapper;
     @Resource
     private MesWmProductIssueLineMapper productIssueLineMapper;
+    @Resource
+    private MesWmMiscIssueMapper miscIssueMapper;
+    @Resource
+    private MesWmMiscIssueLineMapper miscIssueLineMapper;
     @Resource
     private MesWmReturnIssueMapper returnIssueMapper;
     @Resource
@@ -235,6 +243,63 @@ public class MesWmMaterialStockController {
                             .id(line.getId())
                             .issueCode(code)
                             .workOrderCode(code) // MVP: 用领料单号代替工单号
+                            .itemName(item != null ? item.getName() : "")
+                            .itemCode(item != null ? item.getCode() : "")
+                            .actionType("领料")
+                            .quantity(line.getQuantity())
+                            .operatorName(user != null ? user.getNickname() : line.getCreator())
+                            .resultStatus("已出库")
+                            .createTime(line.getCreateTime())
+                            .build());
+                }
+            }
+
+            List<MesWmMiscIssueLineDO> miscIssueLines = miscIssueLineMapper.selectList();
+            if (CollUtil.isNotEmpty(miscIssueLines)) {
+                Set<Long> issueIds = convertSet(miscIssueLines, MesWmMiscIssueLineDO::getIssueId);
+                Map<Long, MesWmMiscIssueDO> issueMap = new HashMap<>();
+                for (MesWmMiscIssueDO issue : miscIssueMapper.selectByIds(issueIds)) {
+                    issueMap.put(issue.getId(), issue);
+                }
+                Map<Long, MesMdItemDO> itemMap = itemService.getItemMap(
+                        convertSet(miscIssueLines, MesWmMiscIssueLineDO::getItemId));
+                Set<Long> userIds = miscIssueLines.stream()
+                        .map(l -> {
+                            try {
+                                return Long.parseLong(l.getCreator());
+                            } catch (Exception e) {
+                                return null;
+                            }
+                        })
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toSet());
+                Map<Long, AdminUserRespDTO> userMap = adminUserApi.getUserMap(userIds);
+
+                for (MesWmMiscIssueLineDO line : miscIssueLines) {
+                    MesWmMiscIssueDO issue = issueMap.get(line.getIssueId());
+                    if (issue == null) {
+                        continue;
+                    }
+                    String code = issue.getCode() != null ? issue.getCode() : "";
+                    String workOrderCode = issue.getSourceDocCode() != null ? issue.getSourceDocCode() : code;
+                    if (issueCode != null
+                            && !issueCode.isEmpty()
+                            && !code.contains(issueCode)
+                            && !workOrderCode.contains(issueCode)) {
+                        continue;
+                    }
+                    MesMdItemDO item = itemMap.get(line.getItemId());
+                    Long creatorId = null;
+                    try {
+                        creatorId = Long.parseLong(line.getCreator());
+                    } catch (Exception ignored) {
+                    }
+                    AdminUserRespDTO user = creatorId != null ? userMap.get(creatorId) : null;
+
+                    result.add(MesWmPickReturnRecordRespVO.builder()
+                            .id(line.getId())
+                            .issueCode(code)
+                            .workOrderCode(workOrderCode)
                             .itemName(item != null ? item.getName() : "")
                             .itemCode(item != null ? item.getCode() : "")
                             .actionType("领料")

@@ -1,3 +1,5 @@
+SET NAMES utf8mb4;
+
 -- =============================================
 -- 翼安智链 - 业务菜单初始化 SQL
 -- 使用 5000+ 的 ID 段，避免与 RuoYi 原有菜单冲突
@@ -57,6 +59,12 @@ INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon
 VALUES (5102, '设备详情', 'asset:device:detail', 2, 2, 5100, 'device/detail/:id', '', 'yian/asset/device/detail', 'AssetDeviceDetail', 0, b'0', b'1', b'1', 'admin', NOW(), 'admin', NOW(), b'0');
 
 INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted)
+VALUES (5105, '资产巡检', 'asset:inspection:list', 2, 2, 5100, 'inspection', 'ep:checked', 'yian/asset/inspection/index', 'AssetInspection', 0, b'1', b'1', b'1', 'admin', NOW(), 'admin', NOW(), b'0');
+
+INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted)
+VALUES (5106, '发起巡检', 'asset:inspection:create', 2, 5, 5100, 'inspection/create', '', 'yian/asset/inspection/create', 'AssetInspectionCreate', 0, b'0', b'1', b'1', 'admin', NOW(), 'admin', NOW(), b'0');
+
+INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted)
 VALUES (5103, '资产导入', 'asset:device:import', 2, 3, 5100, 'import', 'ep:upload', 'yian/asset/import/index', 'AssetImport', 0, b'1', b'1', b'1', 'admin', NOW(), 'admin', NOW(), b'0');
 
 INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted)
@@ -77,9 +85,6 @@ VALUES (5203, '新建工单', 'workorder:order:create', 2, 3, 5200, 'create', 'e
 
 INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted)
 VALUES (5204, '工单详情', 'workorder:order:detail', 2, 4, 5200, 'detail/:id', '', 'yian/workorder/detail/index', 'WorkorderDetail', 0, b'0', b'1', b'1', 'admin', NOW(), 'admin', NOW(), b'0');
-
-INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted)
-VALUES (5205, '放行审核', 'workorder:release:list', 2, 5, 5200, 'release', 'ep:stamp', 'yian/workorder/release/index', 'WorkorderRelease', 0, b'1', b'1', b'1', 'admin', NOW(), 'admin', NOW(), b'0');
 
 -- =============================================
 -- 备件库存 - 子菜单 (parent_id = 5300)
@@ -181,6 +186,12 @@ INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon
 VALUES (5102, '设备详情', 'asset:device:detail', 2, 2, 5100, 'device/detail/:id', '', 'yian/asset/device/detail', 'AssetDeviceDetail', 0, b'0', b'1', b'1', 'admin', NOW(), 'admin', NOW(), b'0');
 
 INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted)
+VALUES (5105, '资产巡检', 'asset:inspection:list', 2, 2, 5100, 'inspection', 'ep:checked', 'yian/asset/inspection/index', 'AssetInspection', 0, b'1', b'1', b'1', 'admin', NOW(), 'admin', NOW(), b'0');
+
+INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted)
+VALUES (5106, '发起巡检', 'asset:inspection:create', 2, 5, 5100, 'inspection/create', '', 'yian/asset/inspection/create', 'AssetInspectionCreate', 0, b'0', b'1', b'1', 'admin', NOW(), 'admin', NOW(), b'0');
+
+INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted)
 VALUES (5103, '资产导入', 'asset:device:import', 2, 3, 5100, 'import', 'ep:upload', 'yian/asset/import/index', 'AssetImport', 0, b'1', b'1', b'1', 'admin', NOW(), 'admin', NOW(), b'0');
 
 INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted)
@@ -201,9 +212,6 @@ VALUES (5203, '新建工单', 'workorder:order:create', 2, 3, 5200, 'create', 'e
 
 INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted)
 VALUES (5204, '工单详情', 'workorder:order:detail', 2, 4, 5200, 'detail/:id', '', 'yian/workorder/detail/index', 'WorkorderDetail', 0, b'0', b'1', b'1', 'admin', NOW(), 'admin', NOW(), b'0');
-
-INSERT INTO system_menu (id, name, permission, type, sort, parent_id, path, icon, component, component_name, status, visible, keep_alive, always_show, creator, create_time, updater, update_time, deleted)
-VALUES (5205, '放行审核', 'workorder:release:list', 2, 5, 5200, 'release', 'ep:stamp', 'yian/workorder/release/index', 'WorkorderRelease', 0, b'1', b'1', b'1', 'admin', NOW(), 'admin', NOW(), b'0');
 
 -- =============================================
 -- 备件库存 - 子菜单 (parent_id = 5300)
