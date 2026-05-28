@@ -99,9 +99,9 @@ public class YianStationServiceImpl implements YianStationService {
         workshop.setRemark(buildWorkshopRemark(after));
         if (workshop.getId() == null) {
             workshopMapper.insert(workshop);
-            return;
+        } else {
+            workshopMapper.updateById(workshop);
         }
-        workshopMapper.updateById(workshop);
     }
 
     private void disableWorkshop(YianStationDO station) {

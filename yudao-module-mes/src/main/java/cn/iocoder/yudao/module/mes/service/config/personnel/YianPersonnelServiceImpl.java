@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.mes.service.config.personnel;
 
+import cn.iocoder.yudao.framework.common.exception.ErrorCode;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.mes.controller.admin.config.personnel.vo.YianPersonnelPageReqVO;
@@ -9,8 +10,6 @@ import cn.iocoder.yudao.module.mes.dal.mysql.config.personnel.YianPersonnelExtMa
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-
-import cn.iocoder.yudao.framework.common.exception.ErrorCode;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 
@@ -23,7 +22,6 @@ public class YianPersonnelServiceImpl implements YianPersonnelService {
 
     @Override
     public Long createPersonnel(YianPersonnelSaveReqVO createReqVO) {
-        // 校验用户未重复绑定
         if (personnelMapper.selectByUserId(createReqVO.getUserId()) != null) {
             throw exception(new ErrorCode(1_040_900_000, "该用户已绑定人员信息"));
         }
@@ -60,5 +58,4 @@ public class YianPersonnelServiceImpl implements YianPersonnelService {
             throw exception(new ErrorCode(1_040_900_001, "人员记录不存在"));
         }
     }
-
 }

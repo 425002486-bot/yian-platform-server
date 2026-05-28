@@ -51,9 +51,9 @@ public class YianPersonnelController {
     };
 
     private static final String[][] ROLE_DEFS = {
-            {"site_lead", "站点负责人", "查看设备与工单、派工调度并推动审批节点",
+            {"site_lead", "站点负责人", "查看资产与工单全局状态，协调站点内任务推进",
                     "exec", "exec", "view", "view", "view", "view", "view", "exec"},
-            {"ops_staff", "机务人员", "执行受理、初诊、领料、维修等一线作业",
+            {"ops_staff", "机务人员", "执行受理、初诊、领料和维修等一线处理动作",
                     "view", "exec", "exec", "exec", "view", "view", "view", "none"},
             {"inspector", "复检人员", "确认或驳回复检结果",
                     "view", "view", "view", "view", "exec", "view", "view", "none"},
@@ -61,7 +61,7 @@ public class YianPersonnelController {
                     "view", "view", "view", "view", "view", "exec", "view", "none"},
             {"parts_manager", "备件管理员", "执行库存管理、入库登记和领退料处理",
                     "none", "view", "view", "exec", "view", "view", "view", "none"},
-            {"auditor", "审计人员", "查看日志、履历和责任链以追溯关键操作",
+            {"auditor", "审计人员", "查看日志、履历和责任链路以追溯关键操作",
                     "view", "view", "view", "view", "view", "view", "exec", "none"}
     };
 
