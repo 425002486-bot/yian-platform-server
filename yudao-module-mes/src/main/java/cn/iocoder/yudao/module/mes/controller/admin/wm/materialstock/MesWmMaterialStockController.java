@@ -2,12 +2,14 @@ package cn.iocoder.yudao.module.mes.controller.admin.wm.materialstock;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.iocoder.yudao.framework.apilog.core.annotation.ApiAccessLog;
+import cn.iocoder.yudao.framework.common.enums.CommonStatusEnum;
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.collection.MapUtils;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
+import cn.iocoder.yudao.module.mes.controller.admin.md.item.vo.type.MesMdItemTypeListReqVO;
 import cn.iocoder.yudao.module.mes.controller.admin.wm.materialstock.vo.MesWmPickReturnRecordRespVO;
 import cn.iocoder.yudao.module.mes.controller.admin.wm.materialstock.vo.MesWmMaterialStockInboundReqVO;
 import cn.iocoder.yudao.module.mes.controller.admin.wm.materialstock.vo.YianSparePartImportExcelVO;
@@ -53,6 +55,12 @@ import jakarta.annotation.Resource;
 import org.springframework.web.multipart.MultipartFile;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -397,7 +405,13 @@ public class MesWmMaterialStockController {
             @RequestParam("file") MultipartFile file,
             @RequestParam(value = "updateSupport", required = false, defaultValue = "false") Boolean updateSupport)
             throws Exception {
-        List<YianSparePartImportExcelVO> list = ExcelUtils.read(file, YianSparePartImportExcelVO.class);
+        List<YianSparePartImportExcelVO> list = readSparePartImportRows(file);
+        MesMdItemTypeListReqVO itemTypeReqVO = new MesMdItemTypeListReqVO();
+        itemTypeReqVO.setStatus(CommonStatusEnum.ENABLE.getStatus());
+        List<MesMdItemTypeDO> itemTypes = itemTypeService.getItemTypeList(itemTypeReqVO);
+        List<MesMdUnitMeasureDO> unitMeasures = unitMeasureService
+                .getUnitMeasureListByStatus(CommonStatusEnum.ENABLE.getStatus());
+        List<MesMdVendorDO> vendors = vendorService.getVendorSimpleList();
 
         int createCount = 0, updateCount = 0, failCount = 0;
         List<String> failMessages = new ArrayList<>();
@@ -406,59 +420,94 @@ public class MesWmMaterialStockController {
             YianSparePartImportExcelVO row = list.get(i);
             int rowNum = i + 2; // Excel行号（第1行是表头）
             try {
+                String code = trimToNull(row.getCode());
+                String name = trimToNull(row.getName());
+                String specification = trimToNull(row.getSpecification());
+                String categoryName = trimToNull(row.getCategoryName());
+                String vendorName = trimToNull(row.getVendorName());
+                String unitMeasureName = trimToNull(row.getUnitMeasureName());
+
                 // 1. 校验必填
-                if (row.getCode() == null || row.getCode().isEmpty()) {
+                if (code == null) {
                     failMessages.add("第" + rowNum + "行：料号不能为空");
                     failCount++;
                     continue;
                 }
-                if (row.getName() == null || row.getName().isEmpty()) {
+                if (name == null) {
                     failMessages.add("第" + rowNum + "行：备件名称不能为空");
                     failCount++;
                     continue;
                 }
+                if (categoryName == null) {
+                    failMessages.add("第" + rowNum + "行：分类不能为空");
+                    failCount++;
+                    continue;
+                }
+                if (unitMeasureName == null) {
+                    failMessages.add("第" + rowNum + "行：计量单位不能为空");
+                    failCount++;
+                    continue;
+                }
+
+                MesMdItemTypeDO itemType = findItemTypeByName(itemTypes, categoryName);
+                if (itemType == null) {
+                    failMessages.add("第" + rowNum + "行：未找到分类[" + categoryName + "]");
+                    failCount++;
+                    continue;
+                }
+
+                MesMdUnitMeasureDO unitMeasure = findUnitMeasureByName(unitMeasures, unitMeasureName);
+                if (unitMeasure == null) {
+                    failMessages.add("第" + rowNum + "行：未找到计量单位[" + unitMeasureName + "]");
+                    failCount++;
+                    continue;
+                }
+
+                MesMdVendorDO vendor = null;
+                if (vendorName != null) {
+                    vendor = findVendorByName(vendors, vendorName);
+                    if (vendor == null) {
+                        failMessages.add("第" + rowNum + "行：未找到供应商[" + vendorName + "]");
+                        failCount++;
+                        continue;
+                    }
+                }
 
                 // 2. 查找或创建物料
-                List<MesMdItemDO> existItems = itemService.getItemListByKeyword(row.getCode());
+                List<MesMdItemDO> existItems = itemService.getItemListByKeyword(code);
                 MesMdItemDO matchItem = existItems.stream()
-                        .filter(item -> row.getCode().equals(item.getCode()))
+                        .filter(item -> code.equals(item.getCode()))
                         .findFirst().orElse(null);
 
                 if (matchItem != null && !updateSupport) {
-                    failMessages.add("第" + rowNum + "行：料号[" + row.getCode() + "]已存在，未开启更新模式");
+                    failMessages.add("第" + rowNum + "行：料号[" + code + "]已存在，未开启更新模式");
                     failCount++;
                     continue;
                 }
 
                 Long itemId;
                 if (matchItem != null) {
-                    // 更新已有物料
-                    matchItem.setName(row.getName());
-                    matchItem.setSpecification(row.getSpecification());
-                    if (row.getMinStock() != null) {
-                        matchItem.setMinStock(row.getMinStock());
-                        matchItem.setSafeStockFlag(true);
-                    }
+                    MesMdItemSaveReqVO updateReq = buildItemSaveReq(
+                            matchItem.getId(), code, name, specification, itemType.getId(), unitMeasure.getId(),
+                            row.getMinStock(), matchItem.getMaxStock(), matchItem.getHighValue(),
+                            matchItem.getBatchFlag(), matchItem.getRemark());
+                    itemService.updateItem(updateReq);
                     itemId = matchItem.getId();
                     updateCount++;
                 } else {
-                    // 创建新物料（通过 service）
-                    MesMdItemSaveReqVO createReq = new MesMdItemSaveReqVO();
-                    createReq.setCode(row.getCode());
-                    createReq.setName(row.getName());
-                    createReq.setSpecification(row.getSpecification());
-                    createReq.setMinStock(row.getMinStock());
-                    createReq.setSafeStockFlag(row.getMinStock() != null);
-                    createReq.setUnitMeasureId(1L); // 默认计量单位
-                    createReq.setItemTypeId(1L); // 默认分类
+                    MesMdItemSaveReqVO createReq = buildItemSaveReq(
+                            null, code, name, specification, itemType.getId(), unitMeasure.getId(),
+                            row.getMinStock(), null, false, true, "备件导入创建");
                     itemId = itemService.createItem(createReq);
+                    itemService.updateItemStatus(itemId, CommonStatusEnum.ENABLE.getStatus());
                     createCount++;
                 }
 
                 // 3. 如果有库存数量，创建库存记录
                 if (row.getQuantity() != null && row.getQuantity().compareTo(BigDecimal.ZERO) > 0) {
                     MesWmMaterialStockDO stock = materialStockService.getOrCreateMaterialStock(
-                            itemId, 1L, 1L, 1L, null, null, null, LocalDateTime.now());
+                            itemId, 1L, 1L, 1L, null, null, vendor != null ? vendor.getId() : null,
+                            LocalDateTime.now());
                     materialStockService.updateMaterialStockQuantity(stock.getId(), row.getQuantity(), false);
                 }
             } catch (Exception ex) {
@@ -473,6 +522,125 @@ public class MesWmMaterialStockController {
         result.put("failCount", failCount);
         result.put("failMessages", failMessages);
         return success(result);
+    }
+
+    private List<YianSparePartImportExcelVO> readSparePartImportRows(MultipartFile file) throws IOException {
+        try (Workbook workbook = WorkbookFactory.create(file.getInputStream())) {
+            Sheet sheet = workbook.getNumberOfSheets() > 0 ? workbook.getSheetAt(0) : null;
+            if (sheet == null) {
+                return Collections.emptyList();
+            }
+            DataFormatter formatter = new DataFormatter();
+            Row headerRow = sheet.getRow(sheet.getFirstRowNum());
+            if (headerRow == null) {
+                return Collections.emptyList();
+            }
+            Map<String, Integer> headerIndexMap = buildHeaderIndexMap(headerRow, formatter);
+            List<YianSparePartImportExcelVO> rows = new ArrayList<>();
+            for (int i = sheet.getFirstRowNum() + 1; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
+                if (row == null || isRowBlank(row, formatter)) {
+                    continue;
+                }
+                YianSparePartImportExcelVO vo = new YianSparePartImportExcelVO();
+                vo.setCode(getCellString(row, headerIndexMap.get("料号"), formatter));
+                vo.setName(getCellString(row, headerIndexMap.get("备件名称"), formatter));
+                vo.setSpecification(getCellString(row, headerIndexMap.get("规格型号"), formatter));
+                vo.setCategoryName(getCellString(row, headerIndexMap.get("分类"), formatter));
+                vo.setVendorName(getCellString(row, headerIndexMap.get("供应商"), formatter));
+                vo.setQuantity(getCellBigDecimal(row, headerIndexMap.get("当前库存"), formatter));
+                vo.setMinStock(getCellBigDecimal(row, headerIndexMap.get("安全库存"), formatter));
+                vo.setUnitMeasureName(getCellString(row, headerIndexMap.get("计量单位"), formatter));
+                rows.add(vo);
+            }
+            return rows;
+        } catch (Exception ex) {
+            throw new IOException("导入文件解析失败，请确认模板格式正确", ex);
+        }
+    }
+
+    private Map<String, Integer> buildHeaderIndexMap(Row headerRow, DataFormatter formatter) {
+        Map<String, Integer> headerIndexMap = new LinkedHashMap<>();
+        for (Cell cell : headerRow) {
+            String header = trimToNull(formatter.formatCellValue(cell));
+            if (header != null) {
+                headerIndexMap.put(header, cell.getColumnIndex());
+            }
+        }
+        return headerIndexMap;
+    }
+
+    private boolean isRowBlank(Row row, DataFormatter formatter) {
+        for (Cell cell : row) {
+            if (trimToNull(formatter.formatCellValue(cell)) != null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private String getCellString(Row row, Integer columnIndex, DataFormatter formatter) {
+        if (columnIndex == null) {
+            return null;
+        }
+        return trimToNull(formatter.formatCellValue(row.getCell(columnIndex)));
+    }
+
+    private BigDecimal getCellBigDecimal(Row row, Integer columnIndex, DataFormatter formatter) {
+        String value = getCellString(row, columnIndex, formatter);
+        if (value == null) {
+            return null;
+        }
+        return new BigDecimal(value);
+    }
+
+    private MesMdItemSaveReqVO buildItemSaveReq(Long id, String code, String name, String specification,
+                                                Long itemTypeId, Long unitMeasureId, BigDecimal minStock,
+                                                BigDecimal maxStock, Boolean highValue, Boolean batchFlag,
+                                                String remark) {
+        MesMdItemSaveReqVO reqVO = new MesMdItemSaveReqVO();
+        reqVO.setId(id);
+        reqVO.setCode(code);
+        reqVO.setName(name);
+        reqVO.setSpecification(specification);
+        reqVO.setItemTypeId(itemTypeId);
+        reqVO.setUnitMeasureId(unitMeasureId);
+        reqVO.setMinStock(minStock);
+        reqVO.setMaxStock(maxStock);
+        reqVO.setSafeStockFlag(minStock != null);
+        reqVO.setHighValue(Boolean.TRUE.equals(highValue));
+        reqVO.setBatchFlag(!Boolean.FALSE.equals(batchFlag));
+        reqVO.setRemark(remark);
+        return reqVO;
+    }
+
+    private MesMdItemTypeDO findItemTypeByName(List<MesMdItemTypeDO> itemTypes, String name) {
+        return itemTypes.stream()
+                .filter(itemType -> name.equals(trimToNull(itemType.getName())))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private MesMdUnitMeasureDO findUnitMeasureByName(List<MesMdUnitMeasureDO> unitMeasures, String name) {
+        return unitMeasures.stream()
+                .filter(unitMeasure -> name.equals(trimToNull(unitMeasure.getName())))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private MesMdVendorDO findVendorByName(List<MesMdVendorDO> vendors, String name) {
+        return vendors.stream()
+                .filter(vendor -> name.equals(trimToNull(vendor.getName())))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private String trimToNull(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 
     // ==================== 拼接 VO ====================

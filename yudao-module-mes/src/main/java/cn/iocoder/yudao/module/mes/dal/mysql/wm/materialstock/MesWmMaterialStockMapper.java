@@ -34,7 +34,9 @@ public interface MesWmMaterialStockMapper extends BaseMapperX<MesWmMaterialStock
                 .eqIfPresent(MesWmMaterialStockDO::getVendorId, reqVO.getVendorId())
                 .eqIfPresent(MesWmMaterialStockDO::getFrozen, reqVO.getFrozen());
         wrapper.ne(MesWmMaterialStockDO::getQuantity, BigDecimal.ZERO)
-                .orderByAsc(MesWmMaterialStockDO::getReceiptTime);
+                .orderByDesc(MesWmMaterialStockDO::getUpdateTime)
+                .orderByDesc(MesWmMaterialStockDO::getReceiptTime)
+                .orderByDesc(MesWmMaterialStockDO::getCreateTime);
         // 虚拟仓过滤（Service 层已将 virtualFilter 解析为 virtualWarehouseId）
         if (virtualWarehouseId != null) {
             if (MesWmMaterialStockPageReqVO.VIRTUAL_FILTER_ONLY.equals(reqVO.getVirtualFilter())) {

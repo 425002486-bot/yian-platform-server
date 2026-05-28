@@ -35,7 +35,7 @@ public interface ErrorCodeConstants {
     ErrorCode MD_ITEM_NAME_DUPLICATE = new ErrorCode(1_040_102_002, "鐗╂枡鍚嶇О宸插瓨鍦?");
     ErrorCode MD_ITEM_IMPORT_LIST_IS_EMPTY = new ErrorCode(1_040_102_003, "瀵煎叆鐗╂枡鏁版嵁涓嶈兘涓虹┖");
     ErrorCode MD_ITEM_BATCH_REQUIRED = new ErrorCode(1_040_102_004, "褰撳墠鐗╂枡鍚敤浜嗘壒娆＄鐞嗭紝璇烽€夋嫨鎵规");
-    ErrorCode MD_ITEM_IS_DISABLE = new ErrorCode(1_040_102_005, "鐗╂枡宸茬鐢?");
+    ErrorCode MD_ITEM_IS_DISABLE = new ErrorCode(1_040_102_005, "物料已禁用");
 
     // ========== MES 鍩虹鏁版嵁-鐗╂枡鎵规灞炴€ч厤缃紙1-040-102-100锛?==========
     ErrorCode MD_ITEM_BATCH_CONFIG_NOT_EXISTS = new ErrorCode(1_040_102_100, "鐗╂枡鎵规灞炴€ч厤缃笉瀛樺湪");
