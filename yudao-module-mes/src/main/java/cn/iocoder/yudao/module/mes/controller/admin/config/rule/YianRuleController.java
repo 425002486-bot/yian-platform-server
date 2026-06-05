@@ -1,9 +1,16 @@
 package cn.iocoder.yudao.module.mes.controller.admin.config.rule;
 
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
-import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
+import cn.iocoder.yudao.module.mes.controller.admin.config.rule.vo.YianBatteryRuleEvaluateReqVO;
+import cn.iocoder.yudao.module.mes.controller.admin.config.rule.vo.YianBatteryRuleEvaluateRespVO;
+import cn.iocoder.yudao.module.mes.controller.admin.config.rule.vo.YianDeviceAdmissionRuleEvaluateRespVO;
 import cn.iocoder.yudao.module.mes.controller.admin.config.rule.vo.YianRuleSaveReqVO;
+import cn.iocoder.yudao.module.mes.controller.admin.config.rule.vo.YianReleaseRuleEvaluateReqVO;
+import cn.iocoder.yudao.module.mes.controller.admin.config.rule.vo.YianReleaseRuleEvaluateRespVO;
+import cn.iocoder.yudao.module.mes.controller.admin.config.rule.vo.YianRuleRuntimeRespVO;
 import cn.iocoder.yudao.module.mes.controller.admin.config.rule.vo.YianSlaRuleSaveReqVO;
+import cn.iocoder.yudao.module.mes.controller.admin.config.rule.vo.YianWorkorderStageEvaluateReqVO;
+import cn.iocoder.yudao.module.mes.controller.admin.config.rule.vo.YianWorkorderStageEvaluateRespVO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.config.rule.YianRuleChangeLogDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.config.rule.YianRuleDO;
 import cn.iocoder.yudao.module.mes.dal.dataobject.config.rule.YianSlaRuleDO;
@@ -71,6 +78,40 @@ public class YianRuleController {
             return success(ruleService.getRuleListByCategory(category));
         }
         return success(ruleService.getAllRuleList());
+    }
+
+    @GetMapping("/runtime")
+    @Operation(summary = "获得规则运行时快照")
+    public CommonResult<YianRuleRuntimeRespVO> getRuleRuntime() {
+        return success(ruleService.getRuleRuntime());
+    }
+
+    @PostMapping("/battery/evaluate")
+    @Operation(summary = "评估电池规则")
+    public CommonResult<YianBatteryRuleEvaluateRespVO> evaluateBatteryRule(
+            @Valid @RequestBody YianBatteryRuleEvaluateReqVO reqVO) {
+        return success(ruleService.evaluateBatteryRule(reqVO));
+    }
+
+    @GetMapping("/device-admission/evaluate")
+    @Operation(summary = "评估设备准入规则")
+    public CommonResult<YianDeviceAdmissionRuleEvaluateRespVO> evaluateDeviceAdmissionRule(
+            @RequestParam("id") Long machineryId) {
+        return success(ruleService.evaluateDeviceAdmissionRule(machineryId));
+    }
+
+    @PostMapping("/release/evaluate")
+    @Operation(summary = "评估放行规则")
+    public CommonResult<YianReleaseRuleEvaluateRespVO> evaluateReleaseRule(
+            @Valid @RequestBody YianReleaseRuleEvaluateReqVO reqVO) {
+        return success(ruleService.evaluateReleaseRule(reqVO));
+    }
+
+    @PostMapping("/workorder-stage/evaluate")
+    @Operation(summary = "评估工单节点规则")
+    public CommonResult<YianWorkorderStageEvaluateRespVO> evaluateWorkorderStageRule(
+            @Valid @RequestBody YianWorkorderStageEvaluateReqVO reqVO) {
+        return success(ruleService.evaluateWorkorderStageRule(reqVO));
     }
 
     // ===== SLA =====

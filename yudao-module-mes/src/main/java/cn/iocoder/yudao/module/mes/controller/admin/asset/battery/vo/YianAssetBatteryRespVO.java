@@ -11,6 +11,8 @@ public class YianAssetBatteryRespVO {
 
     private Long id;
 
+    private LocalDateTime createTime;
+
     private String batteryCode;
 
     private String serialNumber;
