@@ -417,15 +417,15 @@ public interface ErrorCodeConstants {
     ErrorCode WM_WAREHOUSE_LOCATION_IS_VIRTUAL = new ErrorCode(1_040_701_008, "铏氭嫙搴撳尯涓嶅厑璁告搷浣?");
 
     // ========== MES 浠撳簱绠＄悊-搴撲綅锛?-040-702-000锛?==========
-    ErrorCode WM_WAREHOUSE_AREA_NOT_EXISTS = new ErrorCode(1_040_702_000, "搴撲綅涓嶅瓨鍦?");
-    ErrorCode WM_WAREHOUSE_AREA_CODE_DUPLICATE = new ErrorCode(1_040_702_001, "鍚屼竴搴撳尯涓嬪簱浣嶇紪鐮佸凡瀛樺湪");
-    ErrorCode WM_WAREHOUSE_AREA_NAME_DUPLICATE = new ErrorCode(1_040_702_002, "鍚屼竴搴撳尯涓嬪簱浣嶅悕绉板凡瀛樺湪");
-    ErrorCode WM_WAREHOUSE_AREA_HAS_WORKSTATION = new ErrorCode(1_040_702_003, "搴撲綅宸茶宸ヤ綔绔欏紩鐢紝鏃犳硶鍒犻櫎");
+    ErrorCode WM_WAREHOUSE_AREA_NOT_EXISTS = new ErrorCode(1_040_702_000, "库位不存在");
+    ErrorCode WM_WAREHOUSE_AREA_CODE_DUPLICATE = new ErrorCode(1_040_702_001, "同一库区下库位编码已存在");
+    ErrorCode WM_WAREHOUSE_AREA_NAME_DUPLICATE = new ErrorCode(1_040_702_002, "同一库区下库位名称已存在");
+    ErrorCode WM_WAREHOUSE_AREA_HAS_WORKSTATION = new ErrorCode(1_040_702_003, "库位已被工作站引用，无法删除");
     ErrorCode WM_WAREHOUSE_LOCATION_REQUIRED = new ErrorCode(1_040_702_004, "閫夋嫨搴撲綅鏃讹紝搴撳尯涓嶈兘涓虹┖");
-    ErrorCode WM_WAREHOUSE_AREA_RELATION_INVALID = new ErrorCode(1_040_702_005, "搴撲綅涓嶅睘浜庢墍閫夊簱鍖?");
-    ErrorCode WM_WAREHOUSE_AREA_HAS_MATERIAL_STOCK = new ErrorCode(1_040_702_006, "搴撲綅涓嬫湁搴撳瓨璁板綍锛屾棤娉曞垹闄?");
-    ErrorCode WM_WAREHOUSE_AREA_WAREHOUSE_MISMATCH = new ErrorCode(1_040_702_007, "搴撲綅涓嶅睘浜庢墍閫変粨搴?");
-    ErrorCode WM_WAREHOUSE_AREA_IS_VIRTUAL = new ErrorCode(1_040_702_008, "铏氭嫙搴撲綅涓嶅厑璁告搷浣?");
+    ErrorCode WM_WAREHOUSE_AREA_RELATION_INVALID = new ErrorCode(1_040_702_005, "库位不属于所选库区");
+    ErrorCode WM_WAREHOUSE_AREA_HAS_MATERIAL_STOCK = new ErrorCode(1_040_702_006, "库位下有库存记录，无法删除");
+    ErrorCode WM_WAREHOUSE_AREA_WAREHOUSE_MISMATCH = new ErrorCode(1_040_702_007, "库位不属于所选仓库");
+    ErrorCode WM_WAREHOUSE_AREA_IS_VIRTUAL = new ErrorCode(1_040_702_008, "虚拟库位不允许操作");
 
     // ========== MES 浠撳簱绠＄悊-搴撳瓨锛?-040-703-000锛?==========
     ErrorCode WM_MATERIAL_STOCK_NOT_EXISTS = new ErrorCode(1_040_703_000, "搴撳瓨璁板綍涓嶅瓨鍦?");
@@ -656,14 +656,14 @@ public interface ErrorCodeConstants {
             "鍑哄簱琛?OQC 妫€楠屾爣璇嗕笌鍙戣揣閫氱煡鍗曡涓嶄竴鑷?");
 
     // ========== MES 浠撳簱绠＄悊-鏉傞」鍑哄簱鍗曪紙1-040-715-000锛?==========
-    ErrorCode WM_MISC_ISSUE_NOT_EXISTS = new ErrorCode(1_040_715_000, "鏉傞」鍑哄簱鍗曚笉瀛樺湪");
-    ErrorCode WM_MISC_ISSUE_CODE_DUPLICATE = new ErrorCode(1_040_715_001, "鏉傞」鍑哄簱鍗曠紪鐮佸凡瀛樺湪");
-    ErrorCode WM_MISC_ISSUE_STATUS_INVALID = new ErrorCode(1_040_715_002, "鏉傞」鍑哄簱鍗曠姸鎬佷笉姝ｇ‘锛屾棤娉曟墽琛岃鎿嶄綔");
-    ErrorCode WM_MISC_ISSUE_NO_LINE = new ErrorCode(1_040_715_003, "鏉傞」鍑哄簱鍗曡嚦灏戦渶瑕佷竴鏉¤鏁版嵁");
-    ErrorCode WM_MISC_ISSUE_CANCEL_NOT_ALLOWED = new ErrorCode(1_040_715_004, "鏉傞」鍑哄簱鍗曞凡瀹屾垚鎴栧凡鍙栨秷锛屾棤娉曞彇娑?");
-    ErrorCode WM_MISC_ISSUE_DETAIL_QUANTITY_MISMATCH = new ErrorCode(1_040_715_005, "鏉傞」鍑哄簱鍗曡鏁伴噺涓庢槑缁嗘暟閲忎笉涓€鑷?");
-    ErrorCode WM_MISC_ISSUE_LINE_NOT_EXISTS = new ErrorCode(1_040_715_100, "鏉傞」鍑哄簱鍗曡涓嶅瓨鍦?");
-    ErrorCode WM_MISC_ISSUE_DETAIL_NOT_EXISTS = new ErrorCode(1_040_715_200, "鏉傞」鍑哄簱鍗曟槑缁嗕笉瀛樺湪");
+    ErrorCode WM_MISC_ISSUE_NOT_EXISTS = new ErrorCode(1_040_715_000, "杂项出库单不存在");
+    ErrorCode WM_MISC_ISSUE_CODE_DUPLICATE = new ErrorCode(1_040_715_001, "杂项出库单编码已存在");
+    ErrorCode WM_MISC_ISSUE_STATUS_INVALID = new ErrorCode(1_040_715_002, "杂项出库单状态不正确，无法执行该操作");
+    ErrorCode WM_MISC_ISSUE_NO_LINE = new ErrorCode(1_040_715_003, "杂项出库单至少需要一条行数据");
+    ErrorCode WM_MISC_ISSUE_CANCEL_NOT_ALLOWED = new ErrorCode(1_040_715_004, "杂项出库单已完成或已取消，无法取消");
+    ErrorCode WM_MISC_ISSUE_DETAIL_QUANTITY_MISMATCH = new ErrorCode(1_040_715_005, "杂项出库单行数量与明细数量不一致");
+    ErrorCode WM_MISC_ISSUE_LINE_NOT_EXISTS = new ErrorCode(1_040_715_100, "杂项出库单行不存在");
+    ErrorCode WM_MISC_ISSUE_DETAIL_NOT_EXISTS = new ErrorCode(1_040_715_200, "杂项出库单明细不存在");
 
     // ========== MES 浠撳簱绠＄悊-鏉傞」鍏ュ簱鍗曪紙1-040-716-000锛?==========
     ErrorCode WM_MISC_RECEIPT_NOT_EXISTS = new ErrorCode(1_040_716_000, "鏉傞」鍏ュ簱鍗曚笉瀛樺湪");

@@ -87,6 +87,11 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>2.2.47</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-model-azure-openai</artifactId>
             <version>${spring-ai.version}</version>
@@ -172,6 +177,26 @@
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-reload4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.swagger.core.v3</groupId>
+                    <artifactId>swagger-annotations</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.agentsflex</groupId>
+                    <artifactId>agents-flex-image-volcengine</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.volcengine</groupId>
+                    <artifactId>volcengine-java-sdk-ark-runtime</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.volcengine</groupId>
+                    <artifactId>volcengine-java-sdk-ark</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.volcengine</groupId>
+                    <artifactId>volcengine-java-sdk-core</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

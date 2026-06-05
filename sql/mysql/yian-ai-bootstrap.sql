@@ -1,0 +1,95 @@
+-- Minimal AI bootstrap for the diagnosis assistant chat flow.
+SET NAMES utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `ai_api_key` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `tenant_id` bigint NOT NULL DEFAULT 1,
+  `name` varchar(128) NOT NULL,
+  `api_key` varchar(512) NOT NULL,
+  `platform` varchar(64) NOT NULL,
+  `url` varchar(255) DEFAULT NULL,
+  `status` tinyint NOT NULL DEFAULT 0,
+  `creator` varchar(64) DEFAULT '',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updater` varchar(64) DEFAULT '',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted` bit(1) NOT NULL DEFAULT b'0',
+  PRIMARY KEY (`id`),
+  KEY `idx_ai_api_key_tenant` (`tenant_id`),
+  KEY `idx_ai_api_key_platform_status` (`platform`, `status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `ai_model` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `tenant_id` bigint NOT NULL DEFAULT 1,
+  `key_id` bigint NOT NULL,
+  `name` varchar(128) NOT NULL,
+  `model` varchar(128) NOT NULL,
+  `platform` varchar(64) NOT NULL,
+  `type` tinyint NOT NULL,
+  `sort` int NOT NULL DEFAULT 0,
+  `status` tinyint NOT NULL DEFAULT 0,
+  `temperature` decimal(5,2) DEFAULT 0.70,
+  `max_tokens` int DEFAULT 4096,
+  `max_contexts` int DEFAULT 20,
+  `creator` varchar(64) DEFAULT '',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updater` varchar(64) DEFAULT '',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted` bit(1) NOT NULL DEFAULT b'0',
+  PRIMARY KEY (`id`),
+  KEY `idx_ai_model_tenant` (`tenant_id`),
+  KEY `idx_ai_model_type_status_sort` (`type`, `status`, `sort`),
+  KEY `idx_ai_model_key_id` (`key_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `ai_chat_conversation` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `tenant_id` bigint NOT NULL DEFAULT 1,
+  `user_id` bigint NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `pinned` bit(1) NOT NULL DEFAULT b'0',
+  `pinned_time` datetime DEFAULT NULL,
+  `role_id` bigint DEFAULT NULL,
+  `model_id` bigint NOT NULL,
+  `model` varchar(128) NOT NULL,
+  `system_message` text,
+  `temperature` decimal(5,2) DEFAULT NULL,
+  `max_tokens` int DEFAULT NULL,
+  `max_contexts` int DEFAULT NULL,
+  `creator` varchar(64) DEFAULT '',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updater` varchar(64) DEFAULT '',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted` bit(1) NOT NULL DEFAULT b'0',
+  PRIMARY KEY (`id`),
+  KEY `idx_ai_chat_conversation_tenant` (`tenant_id`),
+  KEY `idx_ai_chat_conversation_user` (`user_id`),
+  KEY `idx_ai_chat_conversation_model` (`model_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `ai_chat_message` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `tenant_id` bigint NOT NULL DEFAULT 1,
+  `conversation_id` bigint NOT NULL,
+  `reply_id` bigint DEFAULT NULL,
+  `type` varchar(32) NOT NULL,
+  `user_id` bigint DEFAULT NULL,
+  `role_id` bigint DEFAULT NULL,
+  `model` varchar(128) DEFAULT NULL,
+  `model_id` bigint DEFAULT NULL,
+  `content` longtext,
+  `reasoning_content` longtext,
+  `use_context` bit(1) DEFAULT b'1',
+  `segment_ids` varchar(1024) DEFAULT NULL,
+  `web_search_pages` json DEFAULT NULL,
+  `attachment_urls` varchar(2048) DEFAULT NULL,
+  `creator` varchar(64) DEFAULT '',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updater` varchar(64) DEFAULT '',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted` bit(1) NOT NULL DEFAULT b'0',
+  PRIMARY KEY (`id`),
+  KEY `idx_ai_chat_message_tenant` (`tenant_id`),
+  KEY `idx_ai_chat_message_conversation` (`conversation_id`, `id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

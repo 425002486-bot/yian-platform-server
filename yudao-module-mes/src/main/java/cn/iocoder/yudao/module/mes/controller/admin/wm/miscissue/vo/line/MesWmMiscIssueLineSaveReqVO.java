@@ -18,10 +18,10 @@ public class MesWmMiscIssueLineSaveReqVO {
     @NotNull(message = "出库单编号不能为空")
     private Long issueId;
 
-    @Schema(description = "来源单据行ID", example = "1")
+    @Schema(description = "来源单据行 ID", example = "1")
     private Long sourceDocLineId;
 
-    @Schema(description = "库存记录ID", example = "1")
+    @Schema(description = "库存记录 ID", example = "1")
     private Long materialStockId;
 
     @Schema(description = "物料编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
@@ -30,7 +30,7 @@ public class MesWmMiscIssueLineSaveReqVO {
 
     @Schema(description = "出库数量", requiredMode = Schema.RequiredMode.REQUIRED, example = "100.00")
     @NotNull(message = "出库数量不能为空")
-    @DecimalMin(value = "0.01", message = "出库数量必须大于0")
+    @DecimalMin(value = "0.01", message = "出库数量必须大于 0")
     private BigDecimal quantity;
 
     @Schema(description = "批次编号", example = "1")
@@ -51,7 +51,7 @@ public class MesWmMiscIssueLineSaveReqVO {
     @NotNull(message = "库位不能为空")
     private Long areaId;
 
-    @Schema(description = "备注", example = "备注")
+    @Schema(description = "备注", example = "工单领料出库")
     private String remark;
 
 }

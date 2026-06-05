@@ -26,19 +26,20 @@ public class MesWmMiscIssueSaveReqVO {
     @NotNull(message = "杂项类型不能为空")
     private Integer type;
 
-    @Schema(description = "来源单据类型", example = "PURCHASE_ORDER")
+    @Schema(description = "来源单据类型", example = "WORKORDER")
     private String sourceDocType;
-    @Schema(description = "来源单据ID", example = "1")
+
+    @Schema(description = "来源单据 ID", example = "1")
     private Long sourceDocId;
 
-    @Schema(description = "来源单据编号", example = "DOC20260302001")
+    @Schema(description = "来源单据编号", example = "WO-20260527-105")
     private String sourceDocCode;
 
     @Schema(description = "出库日期", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "出库日期不能为空")
     private LocalDateTime issueDate;
 
-    @Schema(description = "备注", example = "备注")
+    @Schema(description = "备注", example = "工单领料出库")
     private String remark;
 
 }

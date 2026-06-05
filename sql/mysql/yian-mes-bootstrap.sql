@@ -627,3 +627,22 @@ WHERE m.id BETWEEN 950000 AND 950019
       AND rm.deleted = b'0'
       AND rm.tenant_id = 1
   );
+
+CREATE TABLE IF NOT EXISTS `yian_official_site_lead` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `contact_name` varchar(30) NOT NULL COMMENT '联系人姓名',
+  `company_name` varchar(100) NOT NULL COMMENT '公司名称',
+  `phone_number` varchar(20) NOT NULL COMMENT '联系电话',
+  `email` varchar(100) DEFAULT NULL COMMENT '联系邮箱',
+  `interested_scene` varchar(50) DEFAULT NULL COMMENT '关注场景',
+  `message` varchar(500) DEFAULT NULL COMMENT '需求描述',
+  `status` tinyint NOT NULL DEFAULT '0' COMMENT '状态 0-待跟进 1-已联系 2-已转化',
+  `creator` varchar(64) DEFAULT '' COMMENT '创建者',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updater` varchar(64) DEFAULT '' COMMENT '更新者',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `deleted` bit(1) NOT NULL DEFAULT b'0' COMMENT '是否删除',
+  PRIMARY KEY (`id`),
+  KEY `idx_yian_official_site_lead_status` (`status`),
+  KEY `idx_yian_official_site_lead_phone` (`phone_number`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='翼安智链官网咨询线索表';
