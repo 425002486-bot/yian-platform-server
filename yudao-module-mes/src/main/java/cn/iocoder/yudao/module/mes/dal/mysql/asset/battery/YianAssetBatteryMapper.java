@@ -17,7 +17,7 @@ public interface YianAssetBatteryMapper extends BaseMapperX<YianAssetBatteryDO> 
                 .eqIfPresent(YianAssetBatteryDO::getHealthStatus, reqVO.getHealthStatus())
                 .eqIfPresent(YianAssetBatteryDO::getWorkshopId, reqVO.getWorkshopId())
                 .eqIfPresent(YianAssetBatteryDO::getLinkedMachineryId, reqVO.getLinkedMachineryId())
-                .orderByDesc(YianAssetBatteryDO::getUpdateTime)
+                .orderByDesc(YianAssetBatteryDO::getCreateTime)
                 .orderByDesc(YianAssetBatteryDO::getId);
         if (StrUtil.isNotBlank(reqVO.getKeyword())) {
             wrapper.and(w -> w.like(YianAssetBatteryDO::getCode, reqVO.getKeyword())
