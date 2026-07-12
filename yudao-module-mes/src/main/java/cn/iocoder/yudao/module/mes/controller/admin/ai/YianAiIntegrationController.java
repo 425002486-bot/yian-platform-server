@@ -63,7 +63,7 @@ public class YianAiIntegrationController {
     @PostMapping("/asset/device/reparse-documents")
     @Operation(summary = "Rebuild parse summary from archive metadata")
     public CommonResult<YianAssetDeviceDocumentParseRespVO> reparseDeviceDocuments(
-            @Valid @RequestBody YianAssetDeviceReparseReqVO reqVO) {
+            @Valid @RequestBody YianAssetDeviceReparseReqVO reqVO) throws Exception {
         return success(yianAiIntegrationService.reparseDeviceDocuments(reqVO));
     }
 

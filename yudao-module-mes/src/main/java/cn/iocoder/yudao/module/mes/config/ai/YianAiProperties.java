@@ -20,7 +20,19 @@ public class YianAiProperties {
     private Long chatModelId;
 
     /**
+     * Optional explicit multimodal OCR model id for certificate and image attachment parsing.
+     * If empty, the system will try to reuse the configured chat model only when that model
+     * clearly advertises OCR / vision capability.
+     */
+    private Long documentVisionModelId;
+
+    /**
      * Maximum extracted file preview length sent to the model.
      */
     private int maxPreviewChars = 4000;
+
+    /**
+     * Maximum OCR text length kept per image attachment before the structured extraction pass.
+     */
+    private int maxOcrChars = 6000;
 }

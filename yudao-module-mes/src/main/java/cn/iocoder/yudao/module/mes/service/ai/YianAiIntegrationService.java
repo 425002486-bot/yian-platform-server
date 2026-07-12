@@ -17,7 +17,7 @@ public interface YianAiIntegrationService {
     YianAssetDeviceDocumentParseRespVO parseDeviceDocuments(Long machineryId, String code, String uploadedBy,
                                                             List<MultipartFile> files) throws Exception;
 
-    YianAssetDeviceDocumentParseRespVO reparseDeviceDocuments(YianAssetDeviceReparseReqVO reqVO);
+    YianAssetDeviceDocumentParseRespVO reparseDeviceDocuments(YianAssetDeviceReparseReqVO reqVO) throws Exception;
 
     YianAssetDeviceDocumentParseRespVO getLatestDeviceDocumentParseResult(Long machineryId, String code);
 
