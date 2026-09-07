@@ -3,35 +3,35 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>cn.iocoder.boot</groupId>
-    <artifactId>yudao</artifactId>
+    <groupId>cn.yian.platform</groupId>
+    <artifactId>yian</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
     <modules>
-        <module>yudao-dependencies</module>
-        <module>yudao-framework</module>
+        <module>yian-dependencies</module>
+        <module>yian-framework</module>
         <!-- Server 主项目 -->
-        <module>yudao-server</module>
+        <module>yian-server</module>
         <!-- 各种 module 拓展 -->
-        <module>yudao-module-system</module>
-        <module>yudao-module-infra</module>
-<!--        <module>yudao-module-member</module>-->
-<!--        <module>yudao-module-bpm</module>-->
-<!--        <module>yudao-module-report</module>-->
-<!--        <module>yudao-module-mp</module>-->
-<!--        <module>yudao-module-pay</module>-->
-<!--        <module>yudao-module-mall</module>-->
-<!--        <module>yudao-module-crm</module>-->
-<!--        <module>yudao-module-erp</module>-->
-<!--        <module>yudao-module-iot</module>-->
-        <module>yudao-module-mes</module>
+        <module>yian-module-system</module>
+        <module>yian-module-infra</module>
+<!--        <module>yian-module-member</module>-->
+<!--        <module>yian-module-bpm</module>-->
+<!--        <module>yian-module-report</module>-->
+<!--        <module>yian-module-mp</module>-->
+<!--        <module>yian-module-pay</module>-->
+<!--        <module>yian-module-mall</module>-->
+<!--        <module>yian-module-crm</module>-->
+<!--        <module>yian-module-erp</module>-->
+<!--        <module>yian-module-iot</module>-->
+        <module>yian-module-mes</module>
 <!-- 请参考 https://doc.iocoder.cn/ai/build/ 文档，完成 AI 模块的启动！！！ -->
-        <module>yudao-module-ai</module>
+        <module>yian-module-ai</module>
     </modules>
 
     <name>${project.artifactId}</name>
-    <description>芋道项目基础脚手架</description>
-    <url>https://github.com/YunaiV/ruoyi-vue-pro</url>
+    <description>翼安智链无人机运维平台</description>
+    <url>https://github.com/425002486-bot/yian-platform-server</url>
 
     <properties>
         <revision>2026.04-SNAPSHOT</revision>
@@ -52,8 +52,8 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>cn.iocoder.boot</groupId>
-                <artifactId>yudao-dependencies</artifactId>
+                <groupId>cn.yian.platform</groupId>
+                <artifactId>yian-dependencies</artifactId>
                 <version>${revision}</version>
                 <type>pom</type>
                 <scope>import</scope>

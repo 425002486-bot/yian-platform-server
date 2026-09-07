@@ -1,0 +1,3 @@
+cn.iocoder.yudao.framework.datasource.config.YianDataSourceAutoConfiguration
+cn.iocoder.yudao.framework.mybatis.config.YianMybatisAutoConfiguration
+cn.iocoder.yudao.framework.translate.config.YianTranslateAutoConfiguration

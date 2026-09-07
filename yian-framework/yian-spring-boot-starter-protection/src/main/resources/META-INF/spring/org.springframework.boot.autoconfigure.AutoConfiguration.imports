@@ -1,0 +1,4 @@
+cn.iocoder.yudao.framework.idempotent.config.YianIdempotentConfiguration
+cn.iocoder.yudao.framework.lock4j.config.YianLock4jConfiguration
+cn.iocoder.yudao.framework.ratelimiter.config.YianRateLimiterConfiguration
+cn.iocoder.yudao.framework.signature.config.YianApiSignatureAutoConfiguration

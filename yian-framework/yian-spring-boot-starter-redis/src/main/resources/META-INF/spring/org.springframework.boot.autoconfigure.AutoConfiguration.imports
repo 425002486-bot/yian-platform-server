@@ -1,0 +1,2 @@
+cn.iocoder.yudao.framework.redis.config.YianRedisAutoConfiguration
+cn.iocoder.yudao.framework.redis.config.YianCacheAutoConfiguration

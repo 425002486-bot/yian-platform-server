@@ -1,0 +1,7 @@
+cn.iocoder.yudao.framework.apilog.config.YianApiLogAutoConfiguration
+cn.iocoder.yudao.framework.jackson.config.YianJacksonAutoConfiguration
+cn.iocoder.yudao.framework.swagger.config.YianSwaggerAutoConfiguration
+cn.iocoder.yudao.framework.web.config.YianWebAutoConfiguration
+cn.iocoder.yudao.framework.xss.config.YianXssAutoConfiguration
+cn.iocoder.yudao.framework.banner.config.YianBannerAutoConfiguration
+cn.iocoder.yudao.framework.encrypt.config.YianApiEncryptAutoConfiguration

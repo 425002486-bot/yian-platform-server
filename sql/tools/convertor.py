@@ -1,5 +1,5 @@
 # encoding=utf8
-"""芋道系统数据库迁移工具
+"""翼安智链系统数据库迁移工具
 
 Author: dhb52 (https://gitee.com/dhb52)
 
@@ -28,7 +28,7 @@ from simple_ddl_parser import DDLParser
 sys.stdout = open(sys.stdout.fileno(), mode='w', encoding='utf-8', buffering=1)
 
 PREAMBLE = """/*
- Yudao Database Transfer Tool
+ Yian Database Transfer Tool
 
  Source Server Type    : MySQL
 
@@ -951,7 +951,7 @@ class OpengaussConvertor(KingbaseConvertor):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="芋道系统数据库转换工具")
+    parser = argparse.ArgumentParser(description="翼安智链系统数据库转换工具")
     parser.add_argument(
         "type",
         type=str,

@@ -1,0 +1,3 @@
+cn.iocoder.yudao.framework.mq.redis.config.YianRedisMQProducerAutoConfiguration
+cn.iocoder.yudao.framework.mq.redis.config.YianRedisMQConsumerAutoConfiguration
+cn.iocoder.yudao.framework.mq.rabbitmq.config.YianRabbitMQAutoConfiguration

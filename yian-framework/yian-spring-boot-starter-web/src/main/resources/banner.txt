@@ -1,0 +1,4 @@
+
+  Y I A N   P L A T F O R M
+  翼安智链 · 无人机运维管理平台
+  Spring Boot ${spring-boot.version}

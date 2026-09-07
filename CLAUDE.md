@@ -13,46 +13,46 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 mvn clean install -DskipTests
 
 # Build a specific module
-mvn clean install -DskipTests -pl yudao-module-system -am
+mvn clean install -DskipTests -pl yian-module-system -am
 
 # Run all tests
 mvn test
 
 # Run tests for a specific module
-mvn test -pl yudao-module-system
+mvn test -pl yian-module-system
 
 # Run a single test class
-mvn test -pl yudao-module-system -Dtest=AdminUserServiceImplTest
+mvn test -pl yian-module-system -Dtest=AdminUserServiceImplTest
 
 # Run the application (port 48080)
-mvn spring-boot:run -pl yudao-server
+mvn spring-boot:run -pl yian-server
 ```
 
-The application entry point is `YudaoServerApplication` in `yudao-server`. Default profile is `local`, connecting to MySQL on `127.0.0.1:3306` and Redis on `127.0.0.1:6379`.
+The application entry point is `YianServerApplication` in `yian-server`. Default profile is `local`, connecting to MySQL on `127.0.0.1:3306` and Redis on `127.0.0.1:6379`.
 
 ## Architecture
 
 ```
-yudao-dependencies/          # BOM - all dependency versions managed here
-yudao-framework/             # Reusable Spring Boot starters
-  yudao-common/              # Base classes, utils, enums, ErrorCode definitions
-  yudao-spring-boot-starter-mybatis/     # MyBatis Plus + multi-DB support
-  yudao-spring-boot-starter-redis/       # Redis + Redisson
-  yudao-spring-boot-starter-web/         # REST conventions, Jackson, Swagger
-  yudao-spring-boot-starter-security/    # Auth (Spring Security + Token + Redis)
-  yudao-spring-boot-starter-biz-tenant/  # SaaS multi-tenancy
-  yudao-spring-boot-starter-biz-data-permission/  # Row-level data permissions
-  yudao-spring-boot-starter-test/        # Test base classes & utilities
+yian-dependencies/          # BOM - all dependency versions managed here
+yian-framework/             # Reusable Spring Boot starters
+  yian-common/              # Base classes, utils, enums, ErrorCode definitions
+  yian-spring-boot-starter-mybatis/     # MyBatis Plus + multi-DB support
+  yian-spring-boot-starter-redis/       # Redis + Redisson
+  yian-spring-boot-starter-web/         # REST conventions, Jackson, Swagger
+  yian-spring-boot-starter-security/    # Auth (Spring Security + Token + Redis)
+  yian-spring-boot-starter-biz-tenant/  # SaaS multi-tenancy
+  yian-spring-boot-starter-biz-data-permission/  # Row-level data permissions
+  yian-spring-boot-starter-test/        # Test base classes & utilities
   ... (job, mq, excel, monitor, protection, websocket, biz-ip)
-yudao-module-system/         # Core: users, depts, roles, permissions, dict, OAuth2, SMS, mail
-yudao-module-infra/          # Infrastructure: config, file, codegen, job, API logs
-yudao-module-*/              # Business modules (bpm, pay, mall, crm, erp, iot, mes, ai, member, mp, report)
-yudao-server/                # Aggregator - assembles modules into a runnable Spring Boot app
+yian-module-system/         # Core: users, depts, roles, permissions, dict, OAuth2, SMS, mail
+yian-module-infra/          # Infrastructure: config, file, codegen, job, API logs
+yian-module-*/              # Business modules (bpm, pay, mall, crm, erp, iot, mes, ai, member, mp, report)
+yian-server/                # Aggregator - assembles modules into a runnable Spring Boot app
 ```
 
 ### Enabling Modules
 
-Most modules are commented out in the root `pom.xml` and `yudao-server/pom.xml`. Uncomment the `<module>` and `<dependency>` entries to enable them. By default only `system` and `infra` are active.
+Most modules are commented out in the root `pom.xml` and `yian-server/pom.xml`. Uncomment the `<module>` and `<dependency>` entries to enable them. By default only `system` and `infra` are active.
 
 ### Module Internal Structure
 
@@ -78,12 +78,12 @@ Each business module follows a consistent layered package structure under `cn.io
 
 Modules call each other via `*Api` interfaces in the `api/` package (e.g., `AdminUserApi`). The implementation (`*ApiImpl`) lives in the same module. This provides a clean contract without circular dependencies.
 
-For the mall module specifically, `yudao-module-trade-api` exists as a separate submodule to break a circular dependency between `trade` and `promotion`.
+For the mall module specifically, `yian-module-trade-api` exists as a separate submodule to break a circular dependency between `trade` and `promotion`.
 
 ## Testing Conventions
 
 - **Framework:** JUnit 5 + Mockito + H2 in-memory DB + Jedis Mock
-- **Base classes** (in `yudao-spring-boot-starter-test`):
+- **Base classes** (in `yian-spring-boot-starter-test`):
   - `BaseMockitoUnitTest` - pure mock tests
   - `BaseDbUnitTest` - tests requiring H2 database (auto-cleans via `/sql/clean.sql`)
   - `BaseRedisUnitTest` - tests requiring mock Redis
@@ -102,7 +102,7 @@ For the mall module specifically, `yudao-module-trade-api` exists as a separate 
 - **Multi-tenancy:** Handled transparently by the tenant framework; `tenant_id` column auto-filtered
 - **Object conversion:** MapStruct interfaces in `convert/` package, named `XxxConvert` with `INSTANCE` singleton
 - **Lombok:** Used throughout - `@Data`, `@Builder`, `@AllArgsConstructor` etc.
-- **Config files:** `application.yaml` (base) + `application-local.yaml` (local dev) in `yudao-server/src/main/resources/`
+- **Config files:** `application.yaml` (base) + `application-local.yaml` (local dev) in `yian-server/src/main/resources/`
 
 ## SQL
 

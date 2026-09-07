@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-碰到问题，请在 <https://github.com/YunaiV/ruoyi-vue-pro/issues> 搜索是否存在相似的 issue。
+碰到问题，请在 <https://github.com/425002486-bot/yian-platform-server/issues> 搜索是否存在相似的 issue。
 
 不按照模板提交的 issue，会被系统自动删除。
 
