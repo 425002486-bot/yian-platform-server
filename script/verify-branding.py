@@ -6,6 +6,21 @@ import xml.etree.ElementTree as ET
 root = Path(__file__).resolve().parents[1]
 ns = {'m': 'http://maven.apache.org/POM/4.0.0'}
 errors = []
+for legacy in root.glob('yudao-*'):
+    if legacy.is_dir() and any(p.is_file() for p in legacy.rglob('*')):
+        errors.append(f'Resources remain in legacy module: {legacy.name}')
+
+required_resources = [
+    'yian-framework/yian-spring-boot-starter-biz-ip/src/main/resources/ip2region.xdb',
+    'yian-module-infra/src/main/resources/file/erweima.jpg',
+    'yian-module-system/src/main/resources/images/jigsaw/original/bg1.png',
+    'yian-module-system/src/main/resources/images/jigsaw/slidingBlock/1.png',
+    'yian-module-system/src/main/resources/images/pic-click/bg1.png',
+]
+for resource in required_resources:
+    if not (root / resource).is_file():
+        errors.append(f'Missing runtime resource: {resource}')
+
 pom_count = registrations = 0
 for pom in root.rglob('pom.xml'):
     if 'target' in pom.parts:

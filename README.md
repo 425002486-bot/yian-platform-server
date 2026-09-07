@@ -80,8 +80,6 @@ java -jar yian-server/target/yian-server.jar
 提交问题时请说明页面或接口、复现步骤、期望结果和实际结果，并删除日志中的凭据与业务数据。
 欢迎通过 Issue 讨论问题和改进建议，通过 Pull Request 提交变更。
 
-本项目的命名、配置迁移和验证范围见 [迁移说明](docs/MIGRATION.md)。
-
 ## 许可证
 
 本仓库沿用 [MIT License](LICENSE)。第三方代码及其衍生修改保留原有版权与许可声明，
