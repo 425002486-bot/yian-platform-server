@@ -12,6 +12,7 @@ import com.alibaba.cloud.ai.model.RerankRequest;
 import com.alibaba.cloud.ai.model.RerankResponse;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -30,11 +31,12 @@ import static java.util.Arrays.asList;
  *
  * @author fansili
  */
+@EnabledIfEnvironmentVariable(named = "DASHSCOPE_API_KEY", matches = ".+")
 public class TongYiChatModelTests {
 
     private final DashScopeChatModel chatModel = DashScopeChatModel.builder()
             .dashScopeApi(DashScopeApi.builder()
-                    .apiKey("REMOVED_DASHSCOPE_API_KEY") // https://bailian.console.aliyun.com/cn-beijing/?tab=model#/api-key 获取密钥
+                    .apiKey(System.getenv("DASHSCOPE_API_KEY")) // https://bailian.console.aliyun.com/cn-beijing/?tab=model#/api-key 获取密钥
                     .build())
             .defaultOptions(DashScopeChatOptions.builder()
                     .multiModel(true) // 注意：当使用 qwen3.6-plus 等多模态模型，需要设置为 true，可见 https://help.aliyun.com/zh/model-studio/error-code#error-url 链接
@@ -105,7 +107,7 @@ public class TongYiChatModelTests {
         // 准备环境
         RerankModel rerankModel = new DashScopeRerankModel(
                 DashScopeApi.builder()
-                        .apiKey("REMOVED_DASHSCOPE_API_KEY")
+                        .apiKey(System.getenv("DASHSCOPE_API_KEY"))
                         .build());
         // 准备参数
         String query = "spring";

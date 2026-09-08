@@ -5,6 +5,7 @@ import com.alibaba.cloud.ai.dashscope.image.DashScopeImageModel;
 import com.alibaba.cloud.ai.dashscope.image.DashScopeImageOptions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.ai.image.ImageOptions;
 import org.springframework.ai.image.ImagePrompt;
 import org.springframework.ai.image.ImageResponse;
@@ -22,11 +23,12 @@ import org.springframework.ai.image.ImageResponse;
  *
  * @author fansili
  */
+@EnabledIfEnvironmentVariable(named = "DASHSCOPE_API_KEY", matches = ".+")
 public class TongYiImagesModelTest {
 
     private final DashScopeImageModel imageModel = DashScopeImageModel.builder()
             .dashScopeApi(DashScopeImageApi.builder()
-                    .apiKey("REMOVED_DASHSCOPE_API_KEY") // https://bailian.console.aliyun.com/cn-beijing/?tab=model#/api-key 获取密钥
+                    .apiKey(System.getenv("DASHSCOPE_API_KEY")) // https://bailian.console.aliyun.com/cn-beijing/?tab=model#/api-key 获取密钥
                     .build())
             .build();
 
